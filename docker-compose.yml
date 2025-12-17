@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  integration-service:
+    build: .
+    container_name: llt_integration_service
+    ports:
+      - '3003:3003'
+    environment:
+      - PORT=3003
+      - NODE_ENV=development
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=postgres_password
+      - DB_NAME=llt_integration
+      - REDIS_URL=redis://redis_cache:6379
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+      - redis_cache
+    networks:
+      - llt-net
+
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: llt_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: llt_integration
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - llt-net
+
+  redis_cache:
+    image: redis:7-alpine
+    container_name: llt_redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - llt-net
+
+networks:
+  llt-net:
+    driver: bridge
+
+volumes:
+  pg_data:
+  redis_data:
