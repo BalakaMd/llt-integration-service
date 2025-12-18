@@ -24,7 +24,7 @@ const { forecastByCitySchema } = require('../validators/weatherValidators');
  *         schema:
  *           type: string
  *           pattern: '^\d{4}-\d{2}-\d{2}$'
- *           example: '2024-01-15'
+ *           example: '2025-12-18'
  *         description: Start date filter (YYYY-MM-DD)
  *       - in: query
  *         name: end_date
@@ -32,7 +32,7 @@ const { forecastByCitySchema } = require('../validators/weatherValidators');
  *         schema:
  *           type: string
  *           pattern: '^\d{4}-\d{2}-\d{2}$'
- *           example: '2024-01-18'
+ *           example: '2025-12-22'
  *         description: End date filter (YYYY-MM-DD)
  *     responses:
  *       200:
@@ -47,12 +47,18 @@ const { forecastByCitySchema } = require('../validators/weatherValidators');
  *                   lat: 50.4501
  *                   lng: 30.5234
  *                 forecast:
- *                   - date: '2024-01-15'
+ *                   - date: '2025-12-18'
  *                     temp_min_c: -2.5
  *                     temp_max_c: 3.8
  *                     condition: light snow
  *                     humidity_percent: 78
  *                     precipitation_chance: 60
+ *                   - date: '2025-12-19'
+ *                     temp_min_c: -4.1
+ *                     temp_max_c: 1.2
+ *                     condition: overcast clouds
+ *                     humidity_percent: 82
+ *                     precipitation_chance: 20
  *       404:
  *         description: City not found
  */
