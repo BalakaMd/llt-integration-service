@@ -121,7 +121,8 @@ const getForecast = async (lat, lng) => {
 };
 
 // Get weather by city name (geocode first, then get forecast)
-const getForecastByCity = async city => {
+// Optionally filter by start_date and end_date (format: YYYY-MM-DD)
+const getForecastByCity = async (city, startDate = null, endDate = null) => {
   const mapsService = require('./maps.service');
 
   const location = await mapsService.geocode(city);
@@ -129,7 +130,17 @@ const getForecastByCity = async city => {
     return null;
   }
 
-  const forecast = await getForecast(location.lat, location.lng);
+  let forecast = await getForecast(location.lat, location.lng);
+
+  // Filter forecast by date range if provided
+  if (startDate || endDate) {
+    forecast = forecast.filter(day => {
+      const dayDate = day.date;
+      if (startDate && dayDate < startDate) return false;
+      if (endDate && dayDate > endDate) return false;
+      return true;
+    });
+  }
 
   return {
     city,

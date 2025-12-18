@@ -18,6 +18,22 @@ const { forecastByCitySchema } = require('../validators/weatherValidators');
  *           type: string
  *           example: Київ
  *         description: City name
+ *       - in: query
+ *         name: start_date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}-\d{2}$'
+ *           example: '2024-01-15'
+ *         description: Start date filter (YYYY-MM-DD)
+ *       - in: query
+ *         name: end_date
+ *         required: false
+ *         schema:
+ *           type: string
+ *           pattern: '^\d{4}-\d{2}-\d{2}$'
+ *           example: '2024-01-18'
+ *         description: End date filter (YYYY-MM-DD)
  *     responses:
  *       200:
  *         description: Weather forecast with city info

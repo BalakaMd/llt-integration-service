@@ -13,8 +13,12 @@ const getForecast = async (req, res) => {
 
 const getForecastByCity = async (req, res) => {
   try {
-    const { city } = req.query;
-    const result = await weatherService.getForecastByCity(city);
+    const { city, start_date, end_date } = req.query;
+    const result = await weatherService.getForecastByCity(
+      city,
+      start_date,
+      end_date,
+    );
 
     if (!result) {
       return res.status(404).json({ error: 'City not found' });
