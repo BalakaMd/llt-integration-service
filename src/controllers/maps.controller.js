@@ -27,7 +27,36 @@ const geocode = async (req, res) => {
   }
 };
 
+const searchPois = async (req, res) => {
+  try {
+    const { city, interests } = req.body;
+    const pois = await mapsService.searchPois(city, interests);
+    res.json({ data: pois });
+  } catch (error) {
+    console.error('POI search error:', error.message);
+    res.status(500).json({ error: 'Failed to search POIs' });
+  }
+};
+
+const getCityInfo = async (req, res) => {
+  try {
+    const { city } = req.query;
+    const info = await mapsService.getCityInfo(city);
+
+    if (!info) {
+      return res.status(404).json({ error: 'City not found' });
+    }
+
+    res.json({ data: info });
+  } catch (error) {
+    console.error('City info error:', error.message);
+    res.status(500).json({ error: 'Failed to get city info' });
+  }
+};
+
 module.exports = {
   search,
   geocode,
+  searchPois,
+  getCityInfo,
 };

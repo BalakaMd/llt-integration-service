@@ -73,24 +73,34 @@ const getForecast = async (lat, lng) => {
         temps: [],
         conditions: [],
         icons: [],
+        humidity: [],
+        pop: [],
       };
     }
 
     dailySummary[date].temps.push(item.main.temp);
     dailySummary[date].conditions.push(item.weather[0].description);
     dailySummary[date].icons.push(item.weather[0].icon);
+    dailySummary[date].humidity.push(item.main.humidity);
+    dailySummary[date].pop.push(item.pop || 0);
   });
 
   // Calculate min/max temp and most frequent condition per day
   const normalizedForecast = Object.keys(dailySummary)
     .map(date => {
       const dayData = dailySummary[date];
+      const avgHumidity = Math.round(
+        dayData.humidity.reduce((a, b) => a + b, 0) / dayData.humidity.length,
+      );
+      const maxPop = Math.round(Math.max(...dayData.pop) * 100);
       return {
         date,
-        temp_min: Math.min(...dayData.temps),
-        temp_max: Math.max(...dayData.temps),
-        summary: getMode(dayData.conditions),
+        temp_min_c: Math.round(Math.min(...dayData.temps) * 10) / 10,
+        temp_max_c: Math.round(Math.max(...dayData.temps) * 10) / 10,
+        condition: getMode(dayData.conditions),
         icon: getMode(dayData.icons),
+        humidity_percent: avgHumidity,
+        precipitation_chance: maxPop,
       };
     })
     .slice(0, 5);
@@ -110,6 +120,26 @@ const getForecast = async (lat, lng) => {
   return normalizedForecast;
 };
 
+// Get weather by city name (geocode first, then get forecast)
+const getForecastByCity = async city => {
+  const mapsService = require('./maps.service');
+
+  const location = await mapsService.geocode(city);
+  if (!location) {
+    return null;
+  }
+
+  const forecast = await getForecast(location.lat, location.lng);
+
+  return {
+    city,
+    city_en: location.formatted_address.split(',')[0],
+    coordinates: { lat: location.lat, lng: location.lng },
+    forecast,
+  };
+};
+
 module.exports = {
   getForecast,
+  getForecastByCity,
 };

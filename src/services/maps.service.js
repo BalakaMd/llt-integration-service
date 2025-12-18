@@ -88,7 +88,55 @@ const geocode = async address => {
   return location;
 };
 
+// Search POIs by city and interests/categories
+const searchPois = async (city, interests) => {
+  const results = [];
+
+  for (const interest of interests) {
+    const query = `${interest} in ${city}`;
+    const places = await searchPlaces(query);
+
+    places.forEach(place => {
+      results.push({
+        name: place.name,
+        lat: place.lat,
+        lng: place.lng,
+        rating: place.rating,
+        category: interest,
+        city,
+        address: place.address,
+        external_ref: place.external_ref,
+      });
+    });
+  }
+
+  return results;
+};
+
+// Get city information
+const getCityInfo = async city => {
+  const location = await geocode(city);
+
+  if (!location) {
+    return null;
+  }
+
+  const addressParts = location.formatted_address.split(',');
+  const cityName = addressParts[0].trim();
+  const country = addressParts[addressParts.length - 1].trim();
+
+  return {
+    name: city,
+    name_en: cityName,
+    coordinates: { lat: location.lat, lng: location.lng },
+    country,
+    formatted_address: location.formatted_address,
+  };
+};
+
 module.exports = {
   searchPlaces,
   geocode,
+  searchPois,
+  getCityInfo,
 };
