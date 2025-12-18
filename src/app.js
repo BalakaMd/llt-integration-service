@@ -14,11 +14,7 @@ const PORT = process.env.PORT || 3003;
 app.use(cors());
 app.use(express.json());
 
-app.use(
-  '/integrations/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec),
-);
+app.use('/integrations/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/v1/integrations', routes);
 
 app.get('/integrations/health', (req, res) => {
@@ -30,7 +26,6 @@ const start = async () => {
     await sequelize.authenticate();
     console.log('Database connected');
 
-    await sequelize.createSchema('integration').catch(() => {});
     await sequelize.sync();
     console.log('Database synced');
 
