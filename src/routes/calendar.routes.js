@@ -21,6 +21,7 @@ const {
  *         schema:
  *           type: string
  *           format: uuid
+ *           example: 550e8400-e29b-41d4-a716-446655440000
  *         description: User ID
  *     responses:
  *       302:
@@ -73,9 +74,14 @@ router.get(
  *         schema:
  *           type: string
  *           format: uuid
+ *           example: 550e8400-e29b-41d4-a716-446655440000
  *     responses:
  *       200:
  *         description: Connection status
+ *         content:
+ *           application/json:
+ *             example:
+ *               connected: true
  */
 router.get(
   '/status',
@@ -109,16 +115,26 @@ router.get(
  *               startDate:
  *                 type: string
  *                 pattern: '^\d{4}-\d{2}-\d{2}$'
- *                 example: '2024-01-15'
  *               endDate:
  *                 type: string
  *                 pattern: '^\d{4}-\d{2}-\d{2}$'
- *                 example: '2024-01-20'
  *               description:
  *                 type: string
+ *           example:
+ *             userId: 550e8400-e29b-41d4-a716-446655440000
+ *             title: Trip to Paris
+ *             startDate: '2024-01-15'
+ *             endDate: '2024-01-20'
+ *             description: Vacation in France
  *     responses:
  *       200:
  *         description: Event created
+ *         content:
+ *           application/json:
+ *             example:
+ *               data:
+ *                 eventId: abc123xyz
+ *                 link: https://calendar.google.com/event?eid=abc123xyz
  *       401:
  *         description: Calendar not connected
  */
