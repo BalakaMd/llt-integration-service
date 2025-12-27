@@ -2,34 +2,32 @@ version: '3.8'
 
 services:
   integration-service:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: llt_integration_service
     ports:
       - '3003:3003'
-    environment:
-      - PORT=3003
-      - NODE_ENV=development
-      - DB_HOST=postgres_db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASS=postgres_password
-      - DB_NAME=llt_integration
-      - REDIS_URL=redis://redis_cache:6379
     env_file:
       - .env
     depends_on:
-      - postgres_db
-      - redis_cache
+      postgres_db:
+          condition: service_healthy
+      redis_cache:
+          condition: service_started
     networks:
       - llt-net
 
   postgres_db:
     image: postgres:15-alpine
     container_name: llt_postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres_password
-      POSTGRES_DB: llt_integration
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    env_file:
+      - .env
     ports:
       - '5433:5432'
     volumes:
