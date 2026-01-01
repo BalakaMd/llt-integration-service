@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   integration-service:
+    container_name: integration-service
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: llt_integration_service
     ports:
       - '3003:3003'
     env_file:
@@ -20,7 +20,7 @@ services:
 
   postgres_db:
     image: postgres:15-alpine
-    container_name: llt_postgres
+    container_name: integration-postgres
     healthcheck:
       test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -37,7 +37,7 @@ services:
 
   redis_cache:
     image: redis:7-alpine
-    container_name: llt_redis
+    container_name: llt-redis
     ports:
       - '6379:6379'
     volumes:
@@ -47,7 +47,8 @@ services:
 
 networks:
   llt-net:
-    driver: bridge
+    external: true
+    name: llt-net
 
 volumes:
   pg_data:
