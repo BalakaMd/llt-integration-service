@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   integration-service:
     container_name: integration-service
@@ -15,23 +14,6 @@ services:
           condition: service_healthy
       redis_cache:
           condition: service_started
-    networks:
-      - llt-net
-
-  postgres_db:
-    image: postgres:15-alpine
-    container_name: integration-postgres
-    healthcheck:
-      test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
-    env_file:
-      - .env
-    ports:
-      - '5433:5432'
-    volumes:
-      - pg_data:/var/lib/postgresql/data
     networks:
       - llt-net
 
@@ -51,5 +33,4 @@ networks:
     name: llt-net
 
 volumes:
-  pg_data:
   redis_data:
