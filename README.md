@@ -29,6 +29,7 @@ A Node.js microservice that provides unified access to external APIs for the Lit
   - [OpenWeatherMap API Key](https://openweathermap.org/api)
   - [Google Maps API Key](https://console.cloud.google.com/)
   - [Google OAuth2 Credentials](https://console.cloud.google.com/) (for Calendar)
+- Running PostgreSQL instance reachable from this service (required on startup)
 
 ### Installation
 
@@ -39,15 +40,18 @@ git clone <repository-url>
 cd llt-integration-service
 ```
 
-2. Create `.env` file from example:
-
-```bash
-cp .env.example .env
-```
-
-3. Fill in your API keys in `.env`:
+2. Create a `.env` file:
 
 ```env
+PORT=3003
+
+DB_HOST=localhost
+DB_PORT=5432
+POSTGRES_DB=llt
+POSTGRES_USER=llt
+POSTGRES_PASSWORD=llt
+REDIS_URL=redis://localhost:6379
+
 GOOGLE_MAPS_API_KEY=your_google_maps_key
 OPENWEATHER_API_KEY=your_openweather_key
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -161,6 +165,11 @@ Benefits:
 
 ```
 llt-integration-service/
+├── tests/
+│   ├── maps.service.test.js       # Maps service unit tests
+│   ├── weather.service.test.js    # Weather service unit tests
+│   ├── validate.middleware.test.js # Validation middleware tests
+│   └── validators.test.js         # Joi schema tests
 ├── config/
 │   ├── config.js          # Database configuration
 │   ├── database.js        # Sequelize instance
@@ -178,8 +187,9 @@ llt-integration-service/
 │   └── app.js             # Application entry point
 ├── docker-compose.yml
 ├── Dockerfile
+├── jest.config.js         # Jest configuration
 ├── package.json
-└── .env.example
+└── .env
 ```
 
 ## Environment Variables
@@ -189,11 +199,10 @@ llt-integration-service/
 | `PORT`                 | Server port (default: 3003) |
 | `DB_HOST`              | PostgreSQL host             |
 | `DB_PORT`              | PostgreSQL port             |
-| `DB_NAME`              | Database name               |
-| `DB_USER`              | Database user               |
-| `DB_PASS`              | Database password           |
-| `REDIS_HOST`           | Redis host                  |
-| `REDIS_PORT`           | Redis port                  |
+| `POSTGRES_DB`          | Database name               |
+| `POSTGRES_USER`        | Database user               |
+| `POSTGRES_PASSWORD`    | Database password           |
+| `REDIS_URL`            | Redis connection URL        |
 | `GOOGLE_MAPS_API_KEY`  | Google Maps API key         |
 | `OPENWEATHER_API_KEY`  | OpenWeatherMap API key      |
 | `GOOGLE_CLIENT_ID`     | Google OAuth2 client ID     |
@@ -216,6 +225,12 @@ INTEGRATION_SERVICE_URL = "http://host.docker.internal:3003/api/v1/integrations"
 ```bash
 npm install
 npm run dev
+```
+
+### Run unit tests:
+
+```bash
+npm test
 ```
 
 ### Reset database:
